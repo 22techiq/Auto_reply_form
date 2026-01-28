@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>McOwino||Contact Us</title>
+<!-- Prevent iframe embedding -->
+<meta http-equiv="X-Frame-Options" content="DENY">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
@@ -23,7 +25,7 @@
 
 body{
   font-family:Poppins, sans-serif;
-  background:radial-gradient(circle at top,#020617,#020617);
+  background:#020617;
   color:var(--text);
   min-height:100vh;
   display:flex;
@@ -43,85 +45,40 @@ body{
   box-shadow:0 20px 40px rgba(0,0,0,.4);
 }
 
-.contact-card h2{
-  text-align:center;
-  margin-bottom:8px;
-  font-weight:600;
-}
+h2{text-align:center;margin-bottom:6px}
+p{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:20px}
 
-.contact-card p{
-  text-align:center;
-  font-size:.9rem;
-  color:var(--muted);
-  margin-bottom:22px;
-}
+.form-group{margin-bottom:14px}
+label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px}
 
-.form-group{
-  margin-bottom:16px;
-}
-
-label{
-  font-size:.85rem;
-  margin-bottom:6px;
-  display:block;
-  color:var(--muted);
-}
-
-input, textarea{
+input,textarea{
   width:100%;
-  padding:12px 14px;
-  background:#020617#;
+  padding:12px;
+  background:#020617;
   border:1px solid var(--border);
   border-radius:10px;
   color:var(--text);
   font-family:inherit;
-  outline:none;
 }
 
-input:focus, textarea:focus{
-  border-color:var(--accent);
-}
-
-textarea{
-  resize:none;
-  min-height:120px;
-}
+input:focus,textarea:focus{border-color:var(--accent);outline:none}
+textarea{min-height:120px;resize:none}
 
 button{
   width:100%;
   padding:12px;
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
   border:none;
   border-radius:10px;
-  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
-  color:#020617;
   font-weight:600;
   cursor:pointer;
-  transition:.2s;
 }
 
-button:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
+button:disabled{opacity:.6}
 
-button:hover:not(:disabled){
-  transform:translateY(-1px);
-}
-
-.status{
-  margin-top:14px;
-  font-size:.9rem;
-  text-align:center;
-}
-
+.status{text-align:center;margin-top:14px;font-size:.9rem}
 .success{color:var(--success)}
 .error{color:var(--error)}
-
-@media(max-width:480px){
-  .contact-card{
-    padding:22px;
-  }
-}
 </style>
 </head>
 
@@ -129,30 +86,30 @@ button:hover:not(:disabled){
 
 <div class="contact-card">
   <h2>Contact Us</h2>
-  <p>We’d love to hear from you. Fill in the form below.</p>
+  <p>Send us a message and we’ll respond shortly.</p>
 
   <form id="contactForm">
     <div class="form-group">
       <label>Full Name</label>
-      <input type="text" name="name" required placeholder="John Doe">
+      <input type="text" name="name" required>
     </div>
 
     <div class="form-group">
       <label>Email Address</label>
-      <input type="email" name="email" required placeholder="you@example.com">
+      <input type="email" name="email" required>
     </div>
 
     <div class="form-group">
       <label>Subject</label>
-      <input type="text" name="subject" required placeholder="Subject">
+      <input type="text" name="subject" required>
     </div>
 
     <div class="form-group">
       <label>Message</label>
-      <textarea name="message" required placeholder="Type your message..."></textarea>
+      <textarea name="message" required></textarea>
     </div>
 
-    <button type="submit" id="sendBtn">Send Message</button>
+    <button type="submit" id="btn">Send Message</button>
   </form>
 
   <div id="status" class="status"></div>
@@ -161,45 +118,37 @@ button:hover:not(:disabled){
 <script>
 const form = document.getElementById("contactForm");
 const statusBox = document.getElementById("status");
-const btn = document.getElementById("sendBtn");
+const btn = document.getElementById("btn");
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytzr6McvFwoLNtMD__knFdhcOSFx7sClctF47TN8utl3vGA1_O_hiE1vdwoI3Kc47wyQ/exec";
 
-form.addEventListener("submit", async (e) => {
+form.addEventListener("submit", async e => {
   e.preventDefault();
 
   btn.disabled = true;
   btn.textContent = "Sending...";
   statusBox.textContent = "";
-  statusBox.className = "status";
 
-  const data = {
-    name: form.name.value.trim(),
-    email: form.email.value.trim(),
-    subject: form.subject.value.trim(),
-    message: form.message.value.trim()
-  };
+  const data = new URLSearchParams(new FormData(form));
 
-  try{
+  try {
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      body: data
     });
 
     const result = await res.json();
 
     if(result.status === "success"){
-      statusBox.textContent = "Message sent successfully. We’ll get back to you shortly ✔";
-      statusBox.classList.add("success");
+      statusBox.textContent = "Message sent successfully ✔";
+      statusBox.className = "status success";
       form.reset();
     } else {
       throw new Error();
     }
-
-  } catch(err){
-    statusBox.textContent = "Failed to send message. Please try again.";
-    statusBox.classList.add("error");
+  } catch {
+    statusBox.textContent = "Failed to send message. Try again.";
+    statusBox.className = "status error";
   }
 
   btn.disabled = false;
@@ -207,25 +156,105 @@ form.addEventListener("submit", async (e) => {
 });
 </script>
 
+
+<script>
+/* =================================
+   1. Disable Right Click
+================================= */
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+/* =================================
+   2. Disable Copy / Cut / Paste
+================================= */
+["copy", "cut", "paste", "dragstart"].forEach(evt => {
+  document.addEventListener(evt, e => e.preventDefault());
+});
+
+/* =================================
+   3. Block DevTools Shortcuts
+================================= */
+document.addEventListener("keydown", function (e) {
+  if (
+    e.key === "F12" ||
+    (e.ctrlKey && e.shiftKey && ["I","J","C"].includes(e.key)) ||
+    (e.ctrlKey && e.key === "U")
+  ) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+/* =================================
+   4. DevTools Size Detection
+================================= */
+setInterval(() => {
+  const widthDiff  = window.outerWidth - window.innerWidth;
+  const heightDiff = window.outerHeight - window.innerHeight;
+
+  if (widthDiff > 160 || heightDiff > 160) {
+    document.body.innerHTML =
+      "<h2 style='color:red;margin-top:20%'>Access Denied</h2>";
+  }
+}, 1000);
+
+/* =================================
+   5. Console Open Detection
+================================= */
+(function () {
+  const element = new Image();
+  Object.defineProperty(element, "id", {
+    get: function () {
+      document.body.innerHTML =
+        "<h2 style='color:red;margin-top:20%'>Inspection Blocked</h2>";
+    }
+  });
+  console.log(element);
+})();
+
+/* =================================
+   6. Anti-Debugger Trap
+================================= */
+setInterval(function () {
+  debugger;
+}, 2000);
+
+/* =================================
+   7. Hide Source via Visibility Change
+================================= */
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) {
+    document.body.style.display = "none";
+  } else {
+    document.body.style.display = "block";
+  }
+});
+
+/* =================================
+   8. Disable View Source via Mouse
+================================= */
+document.onmousedown = function (e) {
+  if (e.button === 2) return false;
+};
+</script>
+
+
 <!--Appscript
 function doPost(e) {
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    const data = JSON.parse(e.postData.contents);
 
     const time = new Date();
-    const name = data.name;
-    const email = data.email;
-    const subject = data.subject;
-    const message = data.message;
-    const ip = e.parameter.ip || "Unknown";
+    const name = e.parameter.name;
+    const email = e.parameter.email;
+    const subject = e.parameter.subject;
+    const message = e.parameter.message;
 
-    sheet.appendRow([time, name, email, subject, message, ip]);
+    sheet.appendRow([time, name, email, subject, message]);
 
-    // ADMIN EMAIL
+    // Admin notification
     MailApp.sendEmail({
-      to: "admin@example.com", // CHANGE THIS
-      subject: "New Contact Message: " + subject,
+      to: "22techiq@gmail.com", // CHANGE
+      subject: "New Contact Message",
       htmlBody: `
         <h3>New Contact Submission</h3>
         <p><b>Name:</b> ${name}</p>
@@ -235,34 +264,28 @@ function doPost(e) {
       `
     });
 
-    // AUTO-REPLY TO USER
+    // Auto-reply
     MailApp.sendEmail({
       to: email,
       subject: "We received your message",
       htmlBody: `
         <p>Hello ${name},</p>
-        <p>Thank you for contacting us. We’ve received your message and will get back to you shortly.</p>
-        <p><b>Your Message:</b></p>
-        <blockquote>${message}</blockquote>
-        <br>
+        <p>Thank you for contacting us. We have received your message and will respond shortly.</p>
         <p>Kind regards,<br><b>Support Team</b></p>
       `
     });
 
-    return ContentService.createTextOutput(
-      JSON.stringify({ status: "success" })
-    ).setMimeType(ContentService.MimeType.JSON);
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
-    return ContentService.createTextOutput(
-      JSON.stringify({ status: "error", message: err.toString() })
-    ).setMimeType(ContentService.MimeType.JSON);
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "error", message: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
 -->
-
-
-
 </body>
 </html>
