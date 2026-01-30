@@ -347,6 +347,42 @@ function sendMassEmail(subject, body) {
   );
 }
 
+/*************************************************
+ * AUTOMATED MASS EMAIL (EVERY 2 DAYS)
+ * ADD BELOW EXISTING CODE – DO NOT MODIFY ANYTHING ABOVE
+ *************************************************/
+
+// Create trigger ONCE (run this manually once)
+function createTwoDayEmailTrigger() {
+  // Remove existing trigger if already created (safe)
+  const triggers = ScriptApp.getProjectTriggers();
+  triggers.forEach(t => {
+    if (t.getHandlerFunction() === "autoMassEmail") {
+      ScriptApp.deleteTrigger(t);
+    }
+  });
+
+  // Create new 2-day trigger
+  ScriptApp.newTrigger("autoMassEmail")
+    .timeBased()
+    .everyDays(2)
+    .atHour(9) // Runs at 9 AM (change if needed)
+    .create();
+}
+
+// Automated email function (uses your existing logic)
+function autoMassEmail() {
+  const subject = "Important Update from Our Team";
+  const body = `
+    <p>Hello,</p>
+    <p>This is an automated update sent every two days.</p>
+    <p>Thank you for staying connected with us.</p>
+    <p>Kind regards,<br><b>Support Team</b></p>
+  `;
+
+  // Calls your existing function — no duplication
+  sendMassEmail(subject, body);
+}
 
 -->
 </body>
