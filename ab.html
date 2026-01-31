@@ -226,5 +226,26 @@ form.addEventListener("submit", function(e){
 });
 </script>
 
+<!--DOMPurify-->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  document.querySelectorAll("form").forEach(form => {
+
+    form.addEventListener("submit", () => {
+      const fields = form.querySelectorAll("input, textarea");
+
+      fields.forEach(field => {
+        if (field.value) {
+          field.value = DOMPurify.sanitize(field.value);
+        }
+      });
+    });
+
+  });
+
+});
+</script>
+
 </body>
 </html>
