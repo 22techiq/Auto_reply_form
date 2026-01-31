@@ -5,6 +5,156 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contact Us | McOwino</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#1a73e8;
+  --bg:#f8f9fa;
+  --text:#202124;
+  --muted:#5f6368;
+  --card:#ffffff;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:var(--bg);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.card{
+  width:100%;
+  max-width:520px;
+  background:var(--card);
+  padding:32px;
+  border-radius:14px;
+  box-shadow:0 12px 28px rgba(0,0,0,.1);
+}
+
+h1{
+  margin:0 0 6px;
+  font-size:22px;
+}
+
+p{
+  margin:0 0 20px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.field{margin-bottom:16px}
+
+input,textarea{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:1px solid #dadce0;
+  font-size:14px;
+}
+
+textarea{resize:none;min-height:110px}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  background:var(--primary);
+  color:#fff;
+  font-weight:500;
+  cursor:pointer;
+}
+
+.status{
+  margin-top:14px;
+  font-size:14px;
+  text-align:center;
+}
+.success{color:#137333}
+.error{color:#d93025}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Contact McOwino</h1>
+  <p>Send us a message and we’ll get back to you.</p>
+
+  <form id="contactForm">
+    <div class="field">
+      <input name="name" placeholder="Full Name" required>
+    </div>
+
+    <div class="field">
+      <input name="email" type="email" placeholder="Email Address" required>
+    </div>
+
+    <div class="field">
+      <input name="subject" placeholder="Subject">
+    </div>
+
+    <div class="field">
+      <textarea name="message" placeholder="Your message"></textarea>
+    </div>
+
+    <button type="submit">Send Message</button>
+  </form>
+
+  <div id="status" class="status"></div>
+</div>
+
+<script>
+const form = document.getElementById("contactForm");
+const statusBox = document.getElementById("status");
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  statusBox.textContent = "Sending...";
+  statusBox.className = "status";
+
+  const formData = new FormData(form);
+
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbz4wOZFnqoS26bHJE0SpHYarrh7gmdzl1CBGqxuCmtba9yglcKsACNr-QvCSniWxE1z/exec", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (result.status === "success") {
+      statusBox.textContent = "Message sent successfully ✔";
+      statusBox.classList.add("success");
+      form.reset();
+    } else {
+      throw new Error();
+    }
+  } catch {
+    statusBox.textContent = "Failed to send message. Try again.";
+    statusBox.classList.add("error");
+  }
+});
+</script>
+
+</body>
+</html>
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us | McOwino</title>
+
 <!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
@@ -203,3 +353,4 @@ form.addEventListener("submit", async e => {
 
 </body>
 </html>
+-->
